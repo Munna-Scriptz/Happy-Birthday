@@ -1,8 +1,11 @@
 @import url(https://fonts.googleapis.com/css?family=Lato:300italic);
 
 #CakeWrapper {
+    position: relative;
+    z-index: 3;
     width: 400px;
-    margin: 0 auto;
+    /* The SVG is 500px tall; lifting the wrapper keeps the cake in view. */
+    margin: -160px auto 0;
 }
 
 /* --- Base style for the loader container --- */
@@ -272,7 +275,7 @@
 #cake {
     display: block;
     position: relative;
-    margin: -10em auto 0 auto;
+    margin: 0 auto;
 }
 
 /* ============================================== Candle
@@ -282,10 +285,11 @@
     background: #ffffff;
     border-radius: 10px;
     position: absolute;
-    top: 228px;
+    /* The cake's top is at y≈411 in the 500px SVG; the candle is 35px tall. */
+    top: 376px;
     left: 50%;
     margin-left: -2.4px;
-    margin-top: -8.33333333px;
+    margin-top: 0;
     width: 5px;
     height: 35px;
     transform: translateY(-300px);
@@ -582,5 +586,141 @@
         background-image: url('/src/assets/ribbonImg.png');
         background-size: contain;
         background-repeat: no-repeat;
+    }
+}
+
+/* --- Scrapbook sticker decorations around the cake --- */
+
+.opening-stickers {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.opening-sticker {
+    position: absolute;
+    display: block;
+    object-fit: contain;
+    --rot: 0deg;
+    filter: drop-shadow(0 6px 6px rgba(84, 20, 32, 0.25));
+    animation: stickerBob 4s ease-in-out infinite alternate;
+    transform: rotate(var(--rot));
+}
+
+@keyframes stickerBob {
+    from {
+        transform: translateY(0) rotate(var(--rot));
+    }
+
+    to {
+        transform: translateY(-10px) rotate(var(--rot));
+    }
+}
+
+.sticker--paper {
+    width: 180px;
+    top: 42%;
+    left: -40px;
+    opacity: 0.22;
+    --rot: -18deg;
+    animation-duration: 9s;
+}
+
+.sticker--cat-glasses {
+    width: 118px;
+    top: 12%;
+    left: 6%;
+    --rot: -12deg;
+}
+
+.sticker--cat-hug {
+    width: 122px;
+    top: 18%;
+    right: 7%;
+    --rot: 10deg;
+    animation-delay: -1.2s;
+}
+
+.sticker--flower {
+    width: 92px;
+    bottom: 14%;
+    left: 9%;
+    --rot: -8deg;
+    animation-delay: -0.6s;
+}
+
+.sticker--heart {
+    width: 128px;
+    bottom: 11%;
+    right: 9%;
+    --rot: 14deg;
+    animation-delay: -2s;
+}
+
+.sticker--spark {
+    width: 70px;
+    top: 8%;
+    right: 24%;
+    --rot: 6deg;
+    animation-delay: -1.8s;
+}
+
+.sticker--tape-one {
+    width: 122px;
+    top: 6%;
+    left: 26%;
+    --rot: -16deg;
+    opacity: 0.8;
+}
+
+.sticker--tape-two {
+    width: 112px;
+    bottom: 8%;
+    left: 33%;
+    --rot: 12deg;
+    opacity: 0.8;
+}
+
+@media screen and (max-width: 658px) {
+    .opening-sticker {
+        filter: drop-shadow(0 4px 4px rgba(84, 20, 32, 0.2));
+    }
+
+    .sticker--paper,
+    .sticker--tape-one,
+    .sticker--tape-two {
+        display: none;
+    }
+
+    .sticker--cat-glasses {
+        width: 80px;
+        top: 12%;
+        left: 3%;
+    }
+
+    .sticker--cat-hug {
+        width: 84px;
+        top: 16%;
+        right: 3%;
+    }
+
+    .sticker--flower {
+        width: 62px;
+        bottom: 20%;
+        left: 5%;
+    }
+
+    .sticker--heart {
+        width: 84px;
+        bottom: 16%;
+        right: 5%;
+    }
+
+    .sticker--spark {
+        width: 48px;
+        top: 8%;
+        right: 16%;
     }
 }

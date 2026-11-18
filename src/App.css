@@ -41,7 +41,7 @@ body {
     display: flex;
     justify-content: space-between;
     transform: translateY(-200px);
-    animation: translateYFlag 1.5s 2s forwards;
+    animation: translateYFlag 1.5s calc(2s * var(--home-speed, 1)) forwards;
 }
 
 @keyframes translateYFlag {
@@ -84,7 +84,7 @@ body {
 
 .left .btn {
     transform: scale(0);
-    animation: scaleCricle 2s 16s forwards ease-in-out;
+    animation: scaleCricle 2s calc(16s * var(--home-speed, 1)) forwards ease-in-out;
 }
 
 #btn__letter {
@@ -220,7 +220,7 @@ body {
     top: -350px;
     transform: rotate(-40deg);
     z-index: -1;
-    animation: topHat 4s 7s forwards ease;
+    animation: topHat 4s calc(7s * var(--home-speed, 1)) forwards ease;
 }
 
 @keyframes topHat {
@@ -259,7 +259,9 @@ body {
     opacity: 0;
     visibility: hidden;
     width: 0px;
-    animation: dateOfBirth 5s 9s forwards;
+    --date-w: 300px;
+    --date-h: 50px;
+    animation: dateOfBirth 3s calc(9s * var(--home-speed, 1)) forwards;
 }
 
 @keyframes dateOfBirth {
@@ -277,7 +279,7 @@ body {
         transform: translateY(0px);
         opacity: 1;
         visibility: visible;
-        width: 300px;
+        width: var(--date-w);
         height: 0px;
     }
 
@@ -286,8 +288,8 @@ body {
         transform: translateY(0px);
         opacity: 1;
         visibility: visible;
-        width: 300px;
-        height: 50px;
+        width: var(--date-w);
+        height: var(--date-h, 50px);
     }
 }
 
@@ -316,7 +318,7 @@ body {
 .right .box__account {
     position: relative;
     transform: translateY(700px);
-    animation: topBoxImage 8s 7s forwards ease-in;
+    animation: topBoxImage 4s calc(7s * var(--home-speed, 1)) forwards ease-in;
 }
 
 @keyframes topBoxImage {
@@ -350,7 +352,7 @@ body {
     justify-content: center;
     align-items: center;
     transform: scale(0);
-    animation: scaleCricle 3s 15s forwards ease-in-out;
+    animation: scaleCricle 3s calc(15s * var(--home-speed, 1)) forwards ease-in-out;
 }
 
 @keyframes scaleCricle {
@@ -377,12 +379,36 @@ body {
     width: 100px;
     height: 100px;
     background-color: var(--color-text-pink);
+    /* A soft paper texture keeps the small rotating text from looking flat. */
+    background-image: url('/stickers/paper-light.webp'), radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.65), transparent 62%);
+    background-size: cover;
+    background-blend-mode: multiply;
     border-radius: 50%;
     border: 5px solid var(--color-black);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2), inset 0 0 14px rgba(139, 26, 43, 0.25);
     display: flex;
     justify-content: center;
     align-items: center;
-    animation: rotateCricle 5s linear infinite;
+    animation: rotateCricle 8s linear infinite;
+}
+
+.cricle-center {
+    position: absolute;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--color-black);
+    background: radial-gradient(circle at 35% 28%, #fff8f0, #ffd9de 72%, #f4a9b5);
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.25);
+}
+
+.cricle-center svg {
+    width: 20px;
+    height: 20px;
+    animation: scaleHeart 1s infinite linear;
 }
 
 @keyframes rotateCricle {
@@ -400,7 +426,9 @@ body {
     transform-origin: 0 45px;
     font-family: "Sriracha", cursive;
     text-transform: uppercase;
-    font-size: 0.7rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.02em;
+    color: #3b1a1e;
 }
 
 .fa-heart {
@@ -482,7 +510,7 @@ body {
     background-color: var(--color-black);
     clip-path: polygon(0 50%, 35% 35%, 50% 0, 65% 35%, 100% 50%, 65% 65%, 50% 100%, 35% 65%);
     animation: scaleCricle 3s var(--t) forwards,
-        scaleStar 2s 16s infinite ease-in-out;
+        scaleStar 2s calc(16s * var(--home-speed, 1)) infinite ease-in-out;
 }
 
 .decorate_star.star1 {
@@ -565,7 +593,7 @@ body {
     bottom: 180px;
     left: 600px;
     transform: scale(0);
-    animation: scaleCricle 3s 15s forwards ease-in-out;
+    animation: scaleCricle 3s calc(15s * var(--home-speed, 1)) forwards ease-in-out;
 }
 
 
@@ -766,14 +794,34 @@ body {
 
 
 
+@keyframes phoneBtnIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.86);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
 @media screen and (max-width: 658px) {
 
+    .flag__birthday img {
+        width: 300px;
+    }
+
     .flag__birthday .flag__left {
-        transform: rotate(-10deg) translate(-119px, 3px);
+        transform: rotate(-10deg) translate(-105px, 3px);
     }
 
     .flag__birthday .flag__right {
-        transform: rotate(10deg) translate(-106px, 39px) scaleX(-1);
+        transform: rotate(10deg) translate(-96px, 34px) scaleX(-1);
+    }
+
+    #wrapper {
+        height: 100dvh;
     }
 
     .content {
@@ -781,10 +829,12 @@ body {
         position: relative;
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        gap: 25px;
+        justify-content: flex-start;
+        gap: 14px;
         align-items: center;
-        padding-top: 2rem;
+        /* Leave real room for the little letter at the bottom. */
+        height: calc(100dvh - 210px);
+        padding-top: 0.75rem;
     }
 
     .title {
@@ -793,30 +843,65 @@ body {
         display: flex;
         justify-content: center;
         font-family: "Titan One", sans-serif;
-        font-size: 3rem;
-        letter-spacing: 8px;
+        font-size: 3.1rem;
+        letter-spacing: 6px;
         flex-direction: column;
         perspective: 1000px;
     }
 
+    .title .hat {
+        position: absolute;
+        right: -80px;
+        top: -38px !important;
+        transform: rotate(-40deg);
+        z-index: -1;
+        animation: topHat 4s calc(7s * var(--home-speed, 1)) forwards ease;
+    }
+
+    .title .hat img {
+        width: 100px;
+    }
+
+    .date__of__birth {
+        --date-w: min(250px, 72vw);
+        --date-h: 42px;
+        margin-top: 12px;
+    }
+
+    .date__of__birth span {
+        font-size: 1rem;
+        margin: 0 18px;
+    }
+
     .cricle {
         position: absolute;
-        top: 10px;
-        right: -54px;
+        top: 6px;
+        right: -44px;
         display: flex;
         justify-content: center;
         align-items: center;
         transform: scale(0);
-        animation: scaleCricle 3s 15s forwards ease-in-out;
+        animation: scaleCricle 3s calc(15s * var(--home-speed, 1)) forwards ease-in-out;
     }
 
-    .title .hat {
-        position: absolute;
-        right: -98px;
-        top: -51px !important;
-        transform: rotate(-40deg);
-        z-index: -1;
-        animation: topHat 4s 7s forwards ease;
+    .text__cricle {
+        width: 80px;
+        height: 80px;
+    }
+
+    .text__cricle span {
+        transform-origin: 0 35px;
+        font-size: 0.5rem;
+    }
+
+    .cricle-center {
+        width: 32px;
+        height: 32px;
+    }
+
+    .cricle-center svg {
+        width: 16px;
+        height: 16px;
     }
 
     .box__letter .letter__border {
@@ -872,9 +957,7 @@ body {
     }
 
     .love__img img {
-
         width: 84px;
-
     }
 
     .content .right .image {
@@ -885,94 +968,185 @@ body {
         overflow: hidden;
         display: flex;
         align-items: center;
-        border: 6px solid var(--color-black);
+        border: 5px solid var(--color-black);
     }
 
     .name {
         position: absolute;
-        padding: 0px 3px;
-        bottom: -6px;
-        border: 3px solid var(--color-black);
+        padding: 0px 8px;
+        bottom: -5px;
+        border: 2px solid var(--color-black);
     }
 
     .name span {
-        font-size: 1rem;
+        font-size: 1.1rem;
+        margin: 0 10px;
     }
 
     .right .balloon_one {
         position: absolute;
-        top: 10px;
-        left: -77px;
+        top: 6px;
+        left: -46px;
+        rotate: -20deg;
         animation: balloon1 2s infinite linear;
     }
 
     .right .balloon_one img {
-        width: 76px !important;
-    }
-
-    .decorate_flower--one {
-        top: 100px;
-        left: 50px;
-    }
-
-    .decorate_flower--two {
-        top: 585px;
-        left: 20px;
-    }
-
-    .decorate_flower--three {
-        top: 320px;
-        right: 25px;
-    }
-
-    .decorate_star.star1 {
-        top: 45px;
-        left: 200px;
-    }
-
-    .decorate_star.star2 {
-        top: 10px;
-        right: 20px;
-    }
-
-    .decorate_star.star3 {
-        top: 300px;
-        left: 30px;
-    }
-
-    .decorate_star.star4 {
-        bottom: 60px;
-        left: 35px;
-    }
-
-    .decorate_star.star5 {
-        bottom: 140px;
-        left: 500px;
-    }
-
-    .smiley__icon {
-        bottom: 330px;
-        left: 10px;
-        width: 50px;
+        width: 62px !important;
     }
 
     .right .balloon_two {
         position: absolute;
-        top: 60px;
-        right: -65px;
+        top: 80px;
+        right: -52px;
     }
 
-    #btn__letter {
-        margin-top: 15px;
-        width: 200px;
+    .right .balloon_two img {
+        width: 62px !important;
     }
 
+    .decorate_flower--one {
+        top: 90px;
+        left: 40px;
+    }
+
+    .decorate_flower--two {
+        top: 500px;
+        left: 18px;
+    }
+
+    .decorate_flower--three {
+        top: 290px;
+        right: 20px;
+    }
+
+    .decorate_star.star1 {
+        top: 40px;
+        left: 170px;
+    }
+
+    .decorate_star.star2 {
+        top: 10px;
+        right: 18px;
+    }
+
+    .decorate_star.star3 {
+        top: 260px;
+        left: 24px;
+    }
+
+    .decorate_star.star4 {
+        bottom: 45px;
+        left: 28px;
+    }
+
+    .decorate_star.star5 {
+        bottom: 120px;
+        left: 500px;
+    }
+
+    .smiley__icon {
+        bottom: 290px;
+        left: 8px;
+        width: 40px;
+    }
+
+    /* Gentle scale-in without a scale(0) gate — the buttons stay tappable. */
+    .content .left .btn {
+        animation: phoneBtnIn 0.55s calc(6s * var(--home-speed, 1)) both ease-out;
+        transform: none;
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .btn {
+        width: 100%;
+        gap: 6px;
+    }
+
+    #btn__letter,
     #FromRexon {
+        position: relative;
+        z-index: 3;
         margin-top: 10px;
-        width: 200px;
+        width: auto;
+        flex: 1 1 0;
+        min-height: 42px;
+        padding: 7px 4px;
+        border-width: 3px;
+        font-size: 0.78rem;
+        line-height: 1;
+    }
+
+    .btn .mail,
+    #FromRexon a {
+        gap: 4px;
+        font-size: 0.78rem;
+        line-height: 1;
+        white-space: nowrap;
+        text-align: center;
+    }
+
+    .btn svg {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+    }
+
+    /* The little envelope sticks to the bottom-left and sits above the page. */
+    .smallLetter {
+        bottom: 4px !important;
+        left: -4px !important;
+        width: auto;
+        translate: none !important;
+        display: block;
+        pointer-events: none;
+        z-index: 5;
     }
 }
 
+@media screen and (max-width: 658px) and (max-height: 640px) {
+
+    .content {
+        height: calc(100dvh - 190px);
+        gap: 10px;
+        padding-top: 0.5rem;
+    }
+
+    .title {
+        font-size: 2rem;
+    }
+
+    .content .right .image {
+        width: 150px;
+        height: 150px;
+    }
+
+    .text__cricle {
+        width: 70px;
+        height: 70px;
+    }
+
+    .text__cricle span {
+        transform-origin: 0 30px;
+        font-size: 0.46rem;
+    }
+
+    .cricle-center {
+        width: 28px;
+        height: 28px;
+    }
+
+    .cricle-center svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .right .balloon_one img,
+    .right .balloon_two img {
+        width: 54px !important;
+    }
+}
 
 
 
@@ -980,12 +1154,12 @@ body {
 @keyframes popInAndFloat {
     0% {
         opacity: 0;
-        transform: translateY(350px) scale(0.9);
+        transform: translateY(140px) scale(0.92);
     }
 
     50% {
         opacity: 1;
-        transform: translateY(310px) scale(1)
+        transform: translateY(24px) scale(1)
     }
 
     100% {
@@ -996,6 +1170,6 @@ body {
 
 .small-rajib-letter {
     opacity: 0;
-    animation: popInAndFloat 1.0s ease-out 16.0s forwards;
-    transform: translateY(310px);
+    animation: popInAndFloat 0.8s ease-out calc(16s * var(--home-speed, 1)) forwards;
+    transform: translateY(140px);
 }

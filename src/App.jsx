@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import './LoveLetter.css'
 import './BookCanvas.css'
@@ -6,51 +6,58 @@ import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } 
 import Layout from './layout/Layout'
 import Home from './pages/Home'
 import LoveLetter from './pages/LoveLetter'
+import Scrapbook from './pages/Scrapbook'
 import Test from './pages/Test'
 import OpeningAnimation from './components/OpeningAnimation'
 
+// Fixed presentation timings — not personal data, so they stay out of siteData.js.
+const OPENING_TIMINGS = {
+  animateOutAtMs: 8400,
+  showContentAtMs: 8600,
+  hideLoaderAtMs: 9000,
+}
+
+const router = createBrowserRouter(createRoutesFromElements(
+  <Route path='/' element={<Layout />}>
+    <Route index element={<Home />} />
+    <Route path='love-letter' element={<LoveLetter />} />
+    <Route path='scrapbook' element={<Scrapbook />} />
+    <Route path='test' element={<Test />} />
+  </Route>
+))
+
 const App = () => {
-
-  const MyRoute = createBrowserRouter(createRoutesFromElements(
-    <Route>
-      <Route path='/' element={<Layout />}>
-        <Route index element={<Home />}></Route>
-        <Route path='love-Letter' element={<LoveLetter />}></Route>
-        <Route path='test' element={<Test />}></Route>
-      </Route>
-    </Route>
-  ))
-
-
-  // ------------------Cake loader 
-  const [loading, setLoading] = useState(true);
-  const [showContent, setShowContent] = useState(false);
-  const [animateOut, setAnimateOut] = useState(false); // New state for animation
+  const [loading, setLoading] = useState(true)
+  const [showContent, setShowContent] = useState(false)
+  const [animateOut, setAnimateOut] = useState(false)
 
   useEffect(() => {
-    const handlePageLoad = () => {
-      setTimeout(() => setAnimateOut(true), 8400);
-      setTimeout(() => setLoading(false), 9000);
-      setTimeout(() => setShowContent(true), 8600);
-    };
+    let timers = []
 
-    if (document.readyState === "complete") {
-      handlePageLoad();
-    } else {
-      window.addEventListener("load", handlePageLoad);
+    const startLoader = () => {
+      timers = [
+        window.setTimeout(() => setAnimateOut(true), OPENING_TIMINGS.animateOutAtMs),
+        window.setTimeout(() => setShowContent(true), OPENING_TIMINGS.showContentAtMs),
+        window.setTimeout(() => setLoading(false), OPENING_TIMINGS.hideLoaderAtMs),
+      ]
     }
 
-    return () => window.removeEventListener("load", handlePageLoad);
-  }, []);
+    if (document.readyState === 'complete') {
+      startLoader()
+    } else {
+      window.addEventListener('load', startLoader, { once: true })
+    }
+
+    return () => {
+      window.removeEventListener('load', startLoader)
+      timers.forEach((timer) => window.clearTimeout(timer))
+    }
+  }, [])
 
   return (
     <>
-      {
-        loading && <OpeningAnimation animateOut={animateOut}/>
-      }
-      {
-        showContent && <RouterProvider router={MyRoute} />
-      }
+      {loading && <OpeningAnimation animateOut={animateOut} />}
+      {showContent && <RouterProvider router={router} />}
     </>
   )
 }

@@ -1,463 +1,523 @@
-/* --- Keyframes (UNCHANGED) --- */
-
-@keyframes upthenscale {
-    0% {
-        transform: translateY(260px);
-    }
-
-    50% {
-        transform: translateY(0);
-    }
-
-    60% {
-        height: 100px;
-        width: 90px;
-        transform: translateY(0);
-    }
-
-    100% {
-        height: 280px;
-        width: 100%;
-        transform: translateY(0);
-    }
-}
-
-@keyframes scalethendown {
-    0% {
-        height: 250px;
-        width: 100%;
-        transform: translateY(0);
-    }
-
-    50% {
-        height: 100px;
-        width: 90px;
-        transform: translateY(0);
-    }
-
-    60% {
-        transform: translateY(0);
-    }
-
-    100% {
-        transform: translateY(250px);
-    }
-}
-
-@keyframes waitfade {
-
-    0%,
-    50% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 1;
-    }
-}
-
-@keyframes Small-wiggle {
-    0% {
-        transform: translateY(310px) rotate(0);
-    }
-
-    25% {
-        transform: translateY(310px) rotate(2deg);
-    }
-
-    50% {
-        transform: translateY(310px) rotate(0deg);
-    }
-
-    75% {
-        transform: translateY(310px) rotate(-2deg);
-    }
-
-    100% {
-        transform: translateY(310px) rotate(0);
-    }
-}
-
-/* --- Container and State Classes --- */
+/* ==========================================================================
+   SmallLetter.css — a realistic little sealed letter.
+   The paper stays completely hidden until the envelope is clicked. The outer
+   .small-rajib-letter entrance animation lives in App.css and is intentionally
+   kept so the home page choreography does not change.
+   ========================================================================== */
 
 .small-rajib-letter {
-    margin: 150px auto;
-    max-width: 350px;
-    height: 375px;
+    /* Sizes are variables so the mobile layout can reuse the same keyframes. */
+    --paper-closed-w: 110px;
+    --paper-closed-h: 8px;
+    --paper-closed-bottom: 74px;
+    --paper-open-h: min(320px, 58dvh);
+    --paper-open-bottom: 90px;
+    --envelope-w: 150px;
+    --envelope-h: 98px;
+
     position: relative;
+    width: min(300px, calc(100vw - 20px));
+    /* Size the wrapper from the open page so its bottom is never clipped. */
+    height: calc(var(--paper-open-bottom) + var(--paper-open-h) + 10px);
+    margin: 0 auto;
     overflow: hidden;
-    display: block;
+    isolation: isolate;
+    pointer-events: none;
 }
 
-.small-rajib-letter--open .small-rajib-paper {
-    animation-name: upthenscale;
-    animation-duration: .6s;
-    animation-fill-mode: forwards;
-}
-
-.small-rajib-letter--close .small-rajib-paper {
-    animation-name: scalethendown;
-    animation-duration: .4s;
-    animation-fill-mode: forwards;
-}
-
-.small-rajib-letter--open .small-rajib-paper-content {
-    animation-name: waitfade;
-    animation-duration: 1.5s;
-    animation-fill-mode: forwards;
-}
-
-.small-rajib-letter--open .small-rajib-envelope {
-    animation: pause;
-}
-
-/* --- Content and Elements --- */
-
-.small-rajib-paper-content {
-    color: #545454;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 700;
-    padding: 25px;
-    opacity: 0;
-}
+/* --------------------------------------------------------------------------
+   Paper — hidden until the envelope is opened
+   -------------------------------------------------------------------------- */
 
 .small-rajib-paper {
-    height: 50px;
-    width: 90px;
-    background: #f1f0c3;
-    transform: translateY(250px);
-    margin: 0 auto;
-    transition: transform 0.3s 0.1s ease;
-    border-radius: 2px;
-    position: relative;
-}
-
-/* --- SVG Container inside the Paper --- */
-.small-rajib-paper .rajib-diary-deco {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    overflow: hidden;
-}
-
-/* --- Base Diary Line/Dot Styling --- */
-.rajib-diary-deco .diary-line {
-    opacity: 0;
-    stroke-dasharray: 100;
-    /* For drawing effect */
-    stroke-dashoffset: 100;
-    animation-fill-mode: forwards;
-}
-
-.rajib-diary-deco .diary-dot {
-    opacity: 0;
-    transform-origin: center center;
-    animation-fill-mode: forwards;
-}
-
-/* --- Keyframe: Draw In (for lines) --- */
-@keyframes drawIn {
-    to {
-        stroke-dashoffset: 0;
-        opacity: 1;
-    }
-}
-
-/* --- Keyframe: Pulse Dot (for stitching) --- */
-@keyframes pulseDot {
-    0% {
-        transform: scale(0.8);
-        opacity: 0.5;
-    }
-
-    50% {
-        transform: scale(1.2);
-        opacity: 1;
-    }
-
-    100% {
-        transform: scale(0.8);
-        opacity: 0.5;
-    }
-}
-
-
-/* --- Conditional Animation Application (Triggers when the letter is open) --- */
-
-/* Lines animate in (like being drawn) */
-.small-rajib-letter--open .rajib-diary-deco .diary-line {
-    animation: drawIn 1.5s ease-out 0.8s forwards;
-    /* Start after paper opens */
-}
-
-/* Dots appear and pulse after lines are drawn */
-.small-rajib-letter--open .rajib-diary-deco .diary-dot {
-    animation: pulseDot 2s ease-in-out infinite alternate forwards;
-    animation-delay: 2.0s;
-    /* Start after lines are mostly in */
-}
-
-/* Stagger dot animations for a more organic feel */
-.small-rajib-letter--open .rajib-diary-deco .dot-1 {
-    animation-delay: 2.0s;
-}
-
-.small-rajib-letter--open .rajib-diary-deco .dot-2 {
-    animation-delay: 2.1s;
-}
-
-.small-rajib-letter--open .rajib-diary-deco .dot-3 {
-    animation-delay: 2.2s;
-}
-
-.small-rajib-letter--open .rajib-diary-deco .dot-4 {
-    animation-delay: 2.3s;
-}
-
-.small-rajib-letter--open .rajib-diary-deco .dot-5 {
-    animation-delay: 2.4s;
-}
-
-.small-rajib-letter--open .rajib-diary-deco .dot-6 {
-    animation-delay: 2.5s;
-}
-
-.small-rajib-letter--open .rajib-diary-deco .dot-7 {
-    animation-delay: 2.6s;
-}
-
-.small-rajib-letter--open .rajib-diary-deco .dot-8 {
-    animation-delay: 2.7s;
-}
-
-.small-rajib-letter--open .rajib-diary-deco .dot-9 {
-    animation-delay: 2.8s;
-}
-
-/* Content z-index, if not already present */
-.small-rajib-paper-content {
-    z-index: 1;
-    position: relative;
-}
-
-.small-rajib-envelope {
-    width: 94px;
-    height: 60px;
-    background: #f36363;
-    position: relative;
-    margin: auto;
+    left: 50%;
+    bottom: var(--paper-closed-bottom);
     z-index: 2;
-    cursor: pointer;
+    width: var(--paper-closed-w);
+    height: var(--paper-closed-h);
+    transform: translateX(-50%);
+    overflow: hidden;
+    pointer-events: none;
+    visibility: hidden;
+    opacity: 0;
+    background-color: #fdf8e9;
+    background-image:
+        linear-gradient(90deg,
+            transparent 0 22px,
+            rgba(178, 73, 79, 0.28) 22px 23px,
+            transparent 23px),
+        repeating-linear-gradient(180deg,
+            transparent 0 1.5rem,
+            rgba(120, 100, 80, 0.16) 1.5rem calc(1.5rem + 1px));
+    background-position: 0 0, 0 8px;
+    border: 1px solid #e3d7ba;
     border-radius: 3px;
-    transition: box-shadow 0.3s ease;
-    transform: translateY(310px);
-    animation: Small-wiggle 0.3s 0.2s infinite;
+    box-shadow:
+        0 -2px 10px rgba(90, 55, 45, 0.12),
+        0 12px 26px rgba(90, 55, 45, 0.2);
 }
 
-/* Hover effects */
-.small-rajib-envelope:hover {
-    animation: pause;
-}
-
-.small-rajib-envelope:hover .small-rajib-envelope-paper {
-    transform: translateY(-20px);
-}
-
-.small-rajib-envelope:hover .small-rajib-envelope-flap {
-    transform: translateY(-45px);
-    transition: all 300ms ease-in-out;
-}
-
-.small-rajib-envelope:hover .small-rajib-envelope-detail::after {
-    visibility: hidden;
-}
-
-
-.small-rajib-envelope-paper {
-    height: 50px;
-    width: 90px;
-    background: #f1f0c3;
-    transform: translateY(0);
-    margin: 0 auto;
-    transition: transform 0.3s 0.1s ease;
-    border-radius: 2px;
+.small-rajib-paper-texture {
     position: absolute;
-    border: 2px solid transparent;
+    inset: 0;
+    z-index: 0;
+    background: url('/stickers/paper-light.webp') center / cover no-repeat;
+    mix-blend-mode: multiply;
+    opacity: 0.3;
+    pointer-events: none;
 }
 
-.small-rajib-letter--open .small-rajib-envelope-paper {
-    visibility: hidden;
-}
-
-.small-rajib-letter--open .small-rajib-envelope-detail::after {
-    visibility: hidden;
-}
-
-.small-rajib-letter--close .small-rajib-envelope-paper {
-    visibility: hidden;
-}
-
-.small-rajib-envelope-flap {
+.small-rajib-paper::after {
+    /* A tiny pressed-flower sticker tucked into the corner of the page. */
     content: '';
+    position: absolute;
+    right: 6px;
+    bottom: 4px;
+    width: 44px;
+    height: 44px;
+    background: url('/stickers/sticker-3.webp') center / contain no-repeat;
+    opacity: 0.7;
+    transform: rotate(-12deg);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.small-rajib-paper-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    max-height: 100%;
+    padding: 16px 20px 0px 26px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    font-family: "Dancing Script", "Sriracha", cursive;
+    font-size: 0.86rem;
+    line-height: 1.32rem;
+    color: #4a3831;
+    opacity: 0;
+}
+
+.small-rajib-paper-content::-webkit-scrollbar {
     width: 0;
     height: 0;
-    border-left: 45px solid transparent;
-    border-right: 45px solid transparent;
-    border-bottom: 45px solid #f36363;
-    display: block;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    margin: auto;
-    transform: translateY(0);
-    transition: all 300ms ease-in-out;
 }
 
-.small-rajib-letter--open .small-rajib-envelope-flap {
-    transform: translateY(-45px);
-    transition: all 300ms ease-in-out;
+.small-rajib-paper-content p {
+    margin: 0 0 0.4rem;
 }
 
-.small-rajib-letter--open .small-rajib-envelope-detail {
-    border-top: 2px solid #e25b5b;
+.small-rajib-greeting {
+    font-size: 1.06rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem !important;
 }
 
-.small-rajib-envelope-detail {
-    overflow: hidden;
-    height: 100%;
-    width: 100%;
-    display: block;
-    position: absolute;
-    background: #f36363;
-    border-top: 2px solid transparent;
+.small-rajib-closing {
+    margin-top: 0.55rem !important;
 }
 
-.small-rajib-envelope-detail:before {
-    content: '';
-    width: 70px;
-    height: 70px;
-    background: #f36363;
-    display: block;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 30px;
-    margin: auto;
-    transform: rotate(45deg);
-    border: 4px solid #e65454;
-}
-
-.small-rajib-envelope-detail:after {
-    content: '';
-    width: 70px;
-    height: 70px;
-    background: #f36363;
-    display: block;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: -45px;
-    margin: auto;
-    transform: rotate(45deg);
-    border: 4px solid #e65454;
-}
-
-.small-rajib-envelope-fold {
-    height: 25px;
-    width: 86px;
-    background: #f36363;
-    border: 4px solid #e65454;
-    display: block;
-    position: absolute;
-    bottom: 30px;
-    left: 0;
-    right: 0;
-    margin: auto;
-    transition: all 0.3s ease;
-    border-radius: 3px;
+.small-rajib-signature {
+    margin-top: 0.05rem !important;
+    font-size: 1.24rem;
+    font-weight: 700;
+    color: #9b1f2d;
+    transform: rotate(-2deg);
+    transform-origin: left center;
 }
 
 .small-rajib-paper-close {
     position: absolute;
-    right: 10px;
-    top: 5px;
-    display: inline-block;
+    top: 6px;
+    right: 6px;
+    z-index: 5;
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 1px solid rgba(120, 70, 60, 0.35);
+    border-radius: 50%;
+    background: rgba(255, 252, 242, 0.92);
+    color: #7a3a3a;
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 0.9rem;
+    line-height: 1;
     cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
+.small-rajib-paper-close:hover {
+    background: #fff;
+    transform: rotate(90deg);
+}
 
+.small-rajib-paper-close:focus-visible {
+    outline: 2px solid #8b0000;
+    outline-offset: 2px;
+}
 
+/* Open + close choreography */
 
+.small-rajib-letter--open .small-rajib-paper {
+    animation: smallLetterOpen 0.5s cubic-bezier(0.22, 0.8, 0.3, 1) forwards;
+    pointer-events: auto;
+    visibility: visible;
+}
 
+.small-rajib-letter--close .small-rajib-paper {
+    animation: smallLetterClose 0.42s cubic-bezier(0.55, 0.1, 0.7, 0.4) forwards;
+    visibility: visible;
+}
+
+.small-rajib-letter--open .small-rajib-paper-content {
+    animation: smallLetterFade 0.8s ease-out 0.22s forwards;
+}
+
+.small-rajib-letter--close .small-rajib-paper-content {
+    opacity: 1;
+}
+
+@keyframes smallLetterOpen {
+    0% {
+        width: var(--paper-closed-w);
+        height: var(--paper-closed-h);
+        bottom: var(--paper-closed-bottom);
+        opacity: 0;
+    }
+
+    25% {
+        opacity: 1;
+    }
+
+    55% {
+        width: 92%;
+        height: 110px;
+        bottom: var(--paper-closed-bottom);
+        opacity: 1;
+    }
+
+    100% {
+        width: 100%;
+        height: var(--paper-open-h);
+        bottom: var(--paper-open-bottom);
+        opacity: 1;
+    }
+}
+
+@keyframes smallLetterClose {
+    0% {
+        width: 100%;
+        height: var(--paper-open-h);
+        bottom: var(--paper-open-bottom);
+        opacity: 1;
+    }
+
+    55% {
+        width: 92%;
+        height: 110px;
+        bottom: var(--paper-closed-bottom);
+        opacity: 1;
+    }
+
+    100% {
+        width: var(--paper-closed-w);
+        height: var(--paper-closed-h);
+        bottom: var(--paper-closed-bottom);
+        opacity: 0;
+    }
+}
+
+@keyframes smallLetterFade {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Envelope
+   -------------------------------------------------------------------------- */
+
+.small-rajib-envelope {
+    position: absolute;
+    left: 50%;
+    bottom: 12px;
+    z-index: 4;
+    width: var(--envelope-w);
+    height: var(--envelope-h);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    pointer-events: auto;
+    transform: translateX(-50%);
+    filter: drop-shadow(0 10px 14px rgba(74, 26, 29, 0.32));
+    -webkit-tap-highlight-color: transparent;
+    animation: smallEnvelopeWiggle 3.2s ease-in-out infinite;
+}
+
+.small-rajib-envelope:hover,
+.small-rajib-envelope:focus-visible {
+    animation-play-state: paused;
+}
+
+.small-rajib-envelope:focus-visible {
+    outline: 3px solid #fff8f0;
+    outline-offset: 6px;
+    border-radius: 8px;
+}
+
+.small-rajib-envelope-body {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: block;
+    overflow: hidden;
+    border-radius: 5px;
+    background: linear-gradient(158deg, #ff9ea7 0%, #f47682 52%, #dd5564 100%);
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.3),
+        inset 0 -8px 18px rgba(139, 42, 52, 0.18);
+}
+
+.small-rajib-envelope-body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.02) 55%, rgba(139, 42, 52, 0.12));
+    clip-path: polygon(0 0, 50% 58%, 100% 0, 100% 100%, 0 100%);
+    pointer-events: none;
+}
+
+.small-rajib-envelope-body::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(118deg, transparent 49.5%, rgba(139, 42, 52, 0.22) 49.7% 50.2%, transparent 50.5%),
+        linear-gradient(242deg, transparent 49.5%, rgba(139, 42, 52, 0.22) 49.7% 50.2%, transparent 50.5%);
+    pointer-events: none;
+}
+
+.small-rajib-flap {
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    z-index: 3;
+    width: 0;
+    height: 0;
+    border-left: calc(var(--envelope-w) / 2) solid transparent;
+    border-right: calc(var(--envelope-w) / 2) solid transparent;
+    border-top: calc(var(--envelope-h) * 0.48) solid #ff9ea7;
+    transform: translateX(-50%);
+    transform-origin: top center;
+    filter: drop-shadow(0 2px 2px rgba(139, 42, 52, 0.22));
+    transition: transform 0.45s ease, opacity 0.35s ease;
+    backface-visibility: hidden;
+}
+
+.small-rajib-envelope:hover .small-rajib-flap,
+.small-rajib-envelope:focus-visible .small-rajib-flap {
+    transform: translateX(-50%) translateY(-6px) scaleY(0.95);
+}
+
+.small-rajib-letter--open .small-rajib-envelope {
+    animation: none;
+}
+
+.small-rajib-letter--open .small-rajib-flap {
+    transform: translateX(-50%) rotateX(180deg);
+    opacity: 0.85;
+    z-index: 0;
+}
+
+.small-rajib-wax {
+    position: absolute;
+    left: 50%;
+    bottom: -7px;
+    z-index: 6;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    transform: translateX(-50%);
+    border-radius: 46% 54% 50% 50% / 52% 48% 52% 48%;
+    background: radial-gradient(circle at 35% 28%, #d32f3a 0%, #a80f1b 48%, #74040d 100%);
+    box-shadow:
+        inset 0 2px 4px rgba(255, 255, 255, 0.35),
+        inset 0 -4px 7px rgba(60, 0, 0, 0.45),
+        0 4px 7px rgba(60, 0, 0, 0.35);
+    color: #ffdada;
+    font-family: "Coiny", "Dancing Script", cursive;
+    font-size: 0.9rem;
+    line-height: 1;
+    text-shadow: 0 1px 1px rgba(60, 0, 0, 0.55);
+    pointer-events: none;
+}
+
+.small-rajib-wax::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 1px dashed rgba(255, 218, 218, 0.42);
+    border-radius: 50%;
+}
+
+/* Postmark, stamp and address */
+
+.small-rajib-postmark {
+    position: absolute;
+    top: 6px;
+    right: 38px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    transform: rotate(-9deg);
+    border: 1.5px solid rgba(97, 45, 45, 0.5);
+    border-radius: 50%;
+    color: rgba(97, 45, 45, 0.72);
+    font-family: "Inter", system-ui, sans-serif;
+    line-height: 1.05;
+    text-align: center;
+}
+
+.small-rajib-postmark strong {
+    font-size: 0.42rem;
+    letter-spacing: 0.06em;
+}
+
+.small-rajib-postmark small {
+    font-size: 0.3rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.small-rajib-postmark-ring {
+    position: absolute;
+    inset: 3px;
+    border: 1px dashed rgba(97, 45, 45, 0.4);
+    border-radius: 50%;
+}
+
+.small-rajib-stamp {
+    position: absolute;
+    top: 6px;
+    right: 7px;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 29px;
+    height: 35px;
+    padding: 2px;
+    transform: rotate(3deg);
+    background: #fffdf4;
+    border: 1px dashed #b98d8d;
+    box-shadow: 0 1px 2px rgba(97, 45, 45, 0.25);
+    color: #9b1f2d;
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 0.3rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+}
+
+.small-rajib-stamp img {
+    width: 100%;
+    height: 24px;
+    object-fit: contain;
+    margin-bottom: 1px;
+}
+
+.small-rajib-address {
+    position: absolute;
+    left: 14px;
+    top: 38px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    color: #fff8f0;
+    text-shadow: 0 1px 1px rgba(120, 30, 40, 0.35);
+}
+
+.small-rajib-address-to {
+    font-family: "Sriracha", cursive;
+    font-size: 0.5rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.85;
+}
+
+.small-rajib-address strong {
+    font-family: "Dancing Script", cursive;
+    font-size: 1.15rem;
+    line-height: 1.1;
+    font-weight: 700;
+}
+
+.small-rajib-address-note {
+    margin-top: 1px;
+    font-family: "Sriracha", cursive;
+    font-size: 0.46rem;
+    letter-spacing: 0.04em;
+    opacity: 0.9;
+}
+
+@keyframes smallEnvelopeWiggle {
+
+    0%,
+    100% {
+        transform: translateX(-50%) rotate(0deg);
+    }
+
+    30% {
+        transform: translateX(-50%) rotate(1.3deg);
+    }
+
+    65% {
+        transform: translateX(-50%) rotate(-1.3deg);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Mobile
+   -------------------------------------------------------------------------- */
 
 @media screen and (max-width: 658px) {
-    @keyframes upthenscale {
-        0% {
-            transform: translateY(250px);
-        }
+    .small-rajib-letter {
+        --paper-closed-w: 68px;
+        --paper-closed-h: 5px;
+        --paper-closed-bottom: 44px;
+        --paper-open-h: min(300px, 50dvh);
+        --paper-open-bottom: 60px;
+        --envelope-w: 104px;
+        --envelope-h: 68px;
 
-        50% {
-            transform: translateY(0);
-        }
-
-        60% {
-            height: 100px;
-            width: 90px;
-            transform: translateY(0);
-        }
-
-        100% {
-            height: 280px;
-            width: 100%;
-            transform: translateY(0);
-        }
+        width: min(260px, calc(100vw - 16px));
     }
 
     .small-rajib-paper-content {
-        font-size: 14px;
-        width: 290px;
+        font-size: 0.9rem;
+        line-height: 1.08rem;
     }
 
-    .small-rajib-envelope-paper {
-        height: 40px;
-    }
-
-    .small-rajib-paper {
-        height: 36px;
-        width: 65px;
-        transform: translateY(275px);
-    }
-
-    .small-rajib-envelope {
-        width: 65px;
-        height: 40px;
-    }
-
-    .small-rajib-envelope-detail::before {
-        width: 55px;
-        height: 56px;
-        top: 30px;
-    }
-
-    .small-rajib-envelope-detail::after {
-        width: 63px;
-        height: 64px;
-        top: -46px;
-    }
-
-    .small-rajib-envelope-flap {
-        border-left: 34px solid transparent;
-        border-right: 31px solid transparent;
-        border-bottom: 45px solid #f36363;
-    }
-
-    .small-rajib-envelope-flap {
-        transition: all 300ms ease-in-out;
-	transform: translateY(-6px);
 }
 
+@media screen and (max-width: 658px) and (max-height: 640px) {
+    .small-rajib-letter {
+        --paper-open-h: min(130px, 26dvh);
+        --paper-open-bottom: 34px;
+    }
 }

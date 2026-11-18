@@ -1,44 +1,57 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
+import confetti from 'canvas-confetti'
+import { person } from '../data/siteData'
 import '../Opening.css'
+
+// Fixed presentation values — change these only if you redesign the loader.
+const CONFETTI_START_MS = 6800
+const CONFETTI_DURATION_MS = 2000
+const CONFETTI_COLORS = ['#bb0000', '#ffffff', '#FF7882', '#f1f0c3']
 
 const OpeningAnimation = ({ animateOut }) => {
 
-  const makeItRain = () => {
-    let disabled = true;
-    const end = Date.now() + 2000;
+  useEffect(() => {
+    let frameId = 0
+    let cancelled = false
 
-    const colors = ["#bb0000", "#ffffff"];
+    const makeItRain = () => {
+      const end = Date.now() + CONFETTI_DURATION_MS
 
-    const frame = () => {
-      confetti({
-        particleCount: 2,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0 },
-        colors,
-      });
+      const frame = () => {
+        if (cancelled) return
 
-      confetti({
-        particleCount: 2,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1 },
-        colors,
-      });
+        confetti({
+          particleCount: 2,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 },
+          colors: CONFETTI_COLORS,
+        })
 
-      if (Date.now() < end) {
-        requestAnimationFrame(frame);
-      } else {
-        disabled = false;
+        confetti({
+          particleCount: 2,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 },
+          colors: CONFETTI_COLORS,
+        })
+
+        if (Date.now() < end) {
+          frameId = requestAnimationFrame(frame)
+        }
       }
-    };
 
-    frame();
-  };
+      frame()
+    }
 
-  setTimeout(() => {
-    makeItRain()
-  }, 6800);
+    const timerId = window.setTimeout(makeItRain, CONFETTI_START_MS)
+
+    return () => {
+      cancelled = true
+      window.clearTimeout(timerId)
+      cancelAnimationFrame(frameId)
+    }
+  }, [])
 
   return (
     <main className={`bg-[#ee9ca7] w-full h-screen overflow-hidden absolute top-0 left-0 loader-wrapper ${animateOut ? 'slide-up-fade-out' : ''}`}>
@@ -74,6 +87,19 @@ const OpeningAnimation = ({ animateOut }) => {
 
 
       </svg>
+
+      {/* --- Scrapbook stickers scattered around the cake --- */}
+      <div className="opening-stickers" aria-hidden="true">
+        <img className="opening-sticker sticker--paper" src="/stickers/paper-light.webp" alt="" />
+        <img className="opening-sticker sticker--cat-glasses" src="/stickers/cat-glasses.webp" alt="" />
+        <img className="opening-sticker sticker--cat-hug" src="/stickers/cat-hugging.webp" alt="" />
+        <img className="opening-sticker sticker--flower" src="/stickers/sticker-3.webp" alt="" />
+        <img className="opening-sticker sticker--heart" src="/stickers/love-paper-sheet.webp" alt="" />
+        <img className="opening-sticker sticker--spark" src="/stickers/sticker-6.webp" alt="" />
+        <img className="opening-sticker sticker--tape-one" src="/stickers/tape-1.webp" alt="" />
+        <img className="opening-sticker sticker--tape-two" src="/stickers/tape-5.webp" alt="" />
+      </div>
+
       <div id="CakeWrapper">
         <div className="MUNNA cake">
           <div className="MUNNA velas">
@@ -108,8 +134,8 @@ const OpeningAnimation = ({ animateOut }) => {
 
 
           <div className="MUNNA cakeText">
-            <h1 className="MUNNA cakeText-title">Happy 18th Birthday!</h1>
-            <div className="MUNNA cakeText-name">Trisha <div className="MUNNA cakeText-kitty-bow"></div></div>
+            <h1 className="MUNNA cakeText-title">Happy {person.age}th Birthday!</h1>
+            <div className="MUNNA cakeText-name">{person.name} <div className="MUNNA cakeText-kitty-bow"></div></div>
           </div>
 
 

@@ -1,52 +1,76 @@
-import React, { useEffect, useState, useRef } from 'react'; // 👈 Import useRef
-import '../HeartTransition.css';
-import { useLocation } from 'react-router';
+import { useLocation } from 'react-router'
+import { useEffect, useRef, useState } from 'react'
+import '../HeartTransition.css'
 
 const HeartTransition = ({ children }) => {
-    const location = useLocation();
-    const [loading, setLoading] = useState(true);
-    const isInitialMount = useRef(true); 
+  const location = useLocation()
+  const previousLocation = useRef(location.key)
+  const [showTransition, setShowTransition] = useState(false)
 
-    useEffect(() => {
-        if (isInitialMount.current) {
-            isInitialMount.current = false; 
-            const minTime = new Promise(res => setTimeout(res, 100));
-            Promise.all([minTime]).then(() => setLoading(false));
+  useEffect(() => {
+    // Skip the initial page load
+    if (previousLocation.current === location.key) return
 
-            return;
-        }
+    previousLocation.current = location.key
+    setShowTransition(true)
 
-        setLoading(true);
-        const minTime = new Promise(res => setTimeout(res, 7000));
-        const loadDone = new Promise(res => window.requestIdleCallback(res, { timeout: 2000 }));
+    const timer = setTimeout(() => {
+      setShowTransition(false)
+    }, 5000)
 
-        Promise.all([minTime, loadDone]).then(() => setLoading(false));
-    }, [location.pathname]);
+    return () => clearTimeout(timer)
+  }, [location.key])
 
+  return (
+    <>
+      {showTransition && (
+        <div className="route-loader" aria-hidden="true">
+          <div className="loader-stage">
+            <span className="loader-heart loader-heart--one" />
+            <span className="loader-heart loader-heart--two" />
 
-    return (
-        <>
-            {loading && (
-                <div className="route-loader">
-                    <main className='bg-[#8b0000] HeartTransisitonOpen'>
-                        <svg className="heart-loader" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 90 90" version="1.1">
-                            <g className="heart-loader__group">
-                                <path className="heart-loader__square" strokeWidth="1" fill="none" d="M0,30 0,90 60,90 60,30z" />
-                                <path className="heart-loader__circle m--left" strokeWidth="1" fill="none" d="M60,60 a30,30 0 0,1 -60,0 a30,30 0 0,1 60,0" />
-                                <path className="heart-loader__circle m--right" strokeWidth="1" fill="none" d="M60,60 a30,30 0 0,1 -60,0 a30,30 0 0,1 60,0" />
-                                <path className="heart-loader__heartPath" strokeWidth="2" d="M60,30 a30,30 0 0,1 0,60 L0,90 0,30 a30,30 0 0,1 60,0" />
-                            </g>
-                        </svg>
-                    </main>
+            <svg
+              className="heart-loader"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 90 90"
+              version="1.1"
+            >
+              <g className="heart-loader__group">
+                <path
+                  className="heart-loader__square"
+                  strokeWidth="1"
+                  fill="none"
+                  d="M0,30 0,90 60,90 60,30z"
+                />
 
-                </div>
-            )}
+                <path
+                  className="heart-loader__circle m--left"
+                  strokeWidth="1"
+                  fill="none"
+                  d="M60,60 a30,30 0 0,1 -60,0 a30,30 0 0,1 60,0"
+                />
 
-            <div style={{ opacity: loading ? 0.3 : 1, transition: "opacity 0.3s ease" }}>
-                {children}
-            </div>
-        </>
-    )
+                <path
+                  className="heart-loader__circle m--right"
+                  strokeWidth="1"
+                  fill="none"
+                  d="M60,60 a30,30 0 0,1 -60,0 a30,30 0 0,1 60,0"
+                />
+
+                <path
+                  className="heart-loader__heartPath"
+                  strokeWidth="2"
+                  d="M60,30 a30,30 0 0,1 0,60 L0,90 0,30 a30,30 0 0,1 60,0"
+                />
+              </g>
+            </svg>
+          </div>
+        </div>
+      )}
+
+      {children}
+    </>
+  )
 }
 
 export default HeartTransition

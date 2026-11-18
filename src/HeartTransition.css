@@ -1,19 +1,46 @@
-/* --- Styles for the Full-Screen Loader Container --- */
 .route-loader {
     position: fixed;
-    top: 0;
-    left: 0;
+    inset: 0;
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
     z-index: 9999;
-    transition: opacity 0.5s ease-out;
-    opacity: 1; 
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background: #8b0000;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    animation: route-loader-cycle 8s linear forwards;
 }
 
-/* --- THE AWESOME TRANSITION --- */
-.route-loader.fade-out-exit {
-    opacity: 0; 
+/* Stays fully visible while the heart draws, then hides itself. */
+@keyframes route-loader-cycle {
+    0%,
+    82% {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    100% {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
 }
+
+.loader-stage {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* --- Little pulsing hearts around the loader --- */
+
 @keyframes heart-pulse {
     0% {
         transform: scale(0.8) rotate(-45deg);
@@ -31,111 +58,73 @@
     }
 }
 
-/* --- Styles for the Main Container --- */
-main {
-    position: relative;
-    min-height: 100vh;
-    overflow: hidden;
-}
-
-/* --- Pseudo-element Heart 1 (Top Left) --- */
-main::before {
-    content: '';
+.loader-heart {
     position: absolute;
-    top: 50px;
-    left: 50px;
+    z-index: 2;
     width: 20px;
     height: 20px;
     background-color: #f36363;
     transform: rotate(-45deg);
     animation: heart-pulse 2s infinite ease-in-out;
-    filter: blur(0.5px);
-    z-index: 10;
+    pointer-events: none;
 }
 
-/* Add the two half-circles that make the heart top */
-main::before::after {
+.loader-heart::before,
+.loader-heart::after {
     content: '';
     position: absolute;
     border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    background-color: #f36363;
-    left: -10px;
+    background-color: inherit;
+    width: 100%;
+    height: 100%;
+}
+
+.loader-heart::before {
+    left: 0;
+    top: -50%;
+}
+
+.loader-heart::after {
+    left: -50%;
     top: 0;
 }
 
-main::before::before {
-    content: '';
-    position: absolute;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    background-color: #f36363;
-    left: 0;
-    top: -10px;
+.loader-heart--one {
+    top: 50px;
+    left: 50px;
 }
 
-/* --- Pseudo-element Heart 2 (Bottom Right) --- */
-main::after {
-    content: '';
-    position: absolute;
+.loader-heart--two {
     bottom: 50px;
     right: 50px;
     width: 15px;
     height: 15px;
     background-color: #db3434;
-    transform: rotate(-45deg);
-    animation: heart-pulse 2.5s infinite reverse ease-in-out;
-    filter: blur(0.5px);
-    z-index: 10;
+    animation-duration: 2.5s;
+    animation-direction: reverse;
 }
 
-main::after::after {
-    content: '';
-    position: absolute;
-    border-radius: 50%;
-    width: 15px;
-    height: 15px;
-    background-color: #e92323;
-    left: -7.5px;
-    top: 0;
-}
-
-main::after::before {
-    content: '';
-    position: absolute;
-    border-radius: 50%;
-    width: 15px;
-    height: 15px;
-    background-color: #f32828;
-    left: 0;
-    top: -7.5px;
-}
+/* --- The drawn heart --- */
 
 .heart-loader {
-    position: absolute;
+    position: relative;
     display: block;
-    left: 50%;
-    top: 50%;
-    margin-top: -150px;
     width: 300px;
     height: 300px;
     overflow: visible;
+    z-index: 3;
 }
-
-/* --- Nested Selectors --- */
 
 .heart-loader__group {
     transform-origin: 0 90px;
-    animation: group-anim 7s 0.1s forwards;
+    animation: group-anim 4.6s 0.05s forwards;
 }
 
 .heart-loader__square {
     stroke: #FAEBD7;
     stroke-dasharray: 240, 240;
     stroke-dashoffset: 240;
-    animation: square-anim 7s 0.1s forwards;
+    animation: square-anim 4.6s 0.05s forwards;
 }
 
 .heart-loader__circle {
@@ -146,11 +135,11 @@ main::after::before {
 }
 
 .heart-loader__circle.m--left {
-    animation: left-circle-anim 7s 0.1s forwards;
+    animation: left-circle-anim 4.6s 0.05s forwards;
 }
 
 .heart-loader__circle.m--right {
-    animation: right-circle-anim 7s 0.1s forwards;
+    animation: right-circle-anim 4.6s 0.05s forwards;
 }
 
 .heart-loader__heartPath {
@@ -158,10 +147,8 @@ main::after::before {
     fill: transparent;
     stroke-dasharray: 308.522, 308.522;
     stroke-dashoffset: 308.522;
-    animation: heart-anim 7s 0.1s forwards;
+    animation: heart-anim 4.6s 0.05s forwards;
 }
-
-/* --- Keyframes --- */
 
 @keyframes square-anim {
     12% {
@@ -173,11 +160,7 @@ main::after::before {
         opacity: 1;
     }
 
-    85% {
-        stroke-dashoffset: 0;
-        opacity: 0;
-    }
-
+    85%,
     100% {
         stroke-dashoffset: 0;
         opacity: 0;
@@ -205,12 +188,7 @@ main::after::before {
         opacity: 1;
     }
 
-    85% {
-        stroke-dashoffset: 0;
-        transform: translateY(-30px);
-        opacity: 0;
-    }
-
+    85%,
     100% {
         stroke-dashoffset: 0;
         transform: translateY(-30px);
@@ -239,12 +217,7 @@ main::after::before {
         opacity: 1;
     }
 
-    85% {
-        stroke-dashoffset: 0;
-        transform: translateX(30px);
-        opacity: 0;
-    }
-
+    85%,
     100% {
         stroke-dashoffset: 0;
         transform: translateX(30px);
@@ -261,20 +234,9 @@ main::after::before {
         transform: rotate(-45deg);
     }
 
-    90% {
-        transform: rotate(-45deg);
-        opacity: 1;
-    }
-
-    97% {
-        transform: rotate(-45deg);
-        /* 🚨 THE FIX: Change opacity from 0 to 1 */
-        opacity: 1;
-    }
-
+    90%,
     100% {
         transform: rotate(-45deg);
-        /* 🚨 THE FIX: Change opacity from 0 to 1 */
         opacity: 1;
     }
 }
@@ -290,41 +252,26 @@ main::after::before {
         fill: transparent;
     }
 
-    87% {
-        stroke-dashoffset: 0;
-        fill: #af0202;
-    }
-
+    87%,
     100% {
         stroke-dashoffset: 0;
         fill: #af0202;
     }
 }
 
-/* --- Other Styles --- */
-
-.other {
-    position: absolute;
-    left: 0;
-    bottom: 0.5rem;
-    width: 100%;
-    text-align: right;
-}
-
-.other__link {
-    font-size: 1.3rem;
-    margin: 0 1rem;
-}
-
 @media screen and (max-width: 658px) {
     .heart-loader {
-        position: absolute;
-        display: block;
-        left: 50%;
-        top: 50%;
-        margin-top: -150px;
         width: 200px;
         height: 200px;
-        overflow: visible;
+    }
+
+    .loader-heart--one {
+        top: 24px;
+        left: 24px;
+    }
+
+    .loader-heart--two {
+        bottom: 24px;
+        right: 24px;
     }
 }

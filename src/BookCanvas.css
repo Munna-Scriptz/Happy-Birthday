@@ -1,10 +1,10 @@
 .boxMail {
     position: fixed;
-    background: rgb(0, 0, 0, 0.8);
-    backdrop-filter: blur(10px);
+    inset: 0;
+    background: linear-gradient(145deg, #1d0c10 0%, #0c0507 55%, #160609 100%);
     width: 100%;
     height: 100%;
-    top: 0;
+    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -16,11 +16,21 @@
     position: fixed;
     top: 10px;
     right: 10px;
-    font-size: 30px;
     padding: 10px 25px;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 30px;
+    line-height: 1;
     cursor: pointer;
     color: white;
     z-index: 999;
+}
+
+.boxMail .crossAll:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+    border-radius: 6px;
 }
 
 .boxMail .boxMail-container {
@@ -29,7 +39,9 @@
     height: 500px;
     display: flex;
     margin: 0;
-    transform: scale(0.9);
+    /* Multiplication avoids unsupported calc() division in mobile browsers. */
+    scale: min(1, calc((100vw - 16px) * 0.0013333333), calc((100dvh - 90px) * 0.002));
+    filter: drop-shadow(0 22px 34px rgba(0, 0, 0, 0.55));
     -webkit-perspective: 2000px;
     perspective: 2000px;
 }
@@ -51,7 +63,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border: 1px solid black;
+    border: 1px solid rgba(40, 12, 14, 0.5);
 }
 
 /* --- Card 1 Container Styles --- */
@@ -63,7 +75,7 @@
     width: 50%;
     height: 100%;
     /* Softened gradient: Light Pink to Alice Blue */
-    background: linear-gradient(135deg, #FFC0CB 0%, #F0F8FF 100%);
+    background: linear-gradient(135deg, #f9bac8 0%, #ef9bb0 55%, #e98aa4 100%);
     color: #333;
     /* Darker text for contrast on light background */
     display: flex;
@@ -317,13 +329,17 @@
     position: relative;
     width: 50%;
     height: 100%;
-    /* Switched to a soft off-white for a premium paper look */
-    background-color: #f7f7f7;
+    /* Warm ruled paper so the letter reads like a real notebook page. */
+    background-color: #fff8e8;
+    background-image:
+        linear-gradient(90deg, transparent 0 38px, rgba(178, 73, 79, 0.35) 38px 39px, transparent 39px),
+        repeating-linear-gradient(180deg, transparent 0 31px, rgba(120, 100, 80, 0.18) 31px 32px);
+    border-radius: 3px 10px 10px 3px;
     transform-style: preserve-3d;
     transform-origin: left;
     transition: all 1s cubic-bezier(0.25, 0.8, 0.25, 1);
     /* Smoother transition */
-    box-shadow: inset 5px 0 15px rgba(0, 0, 0, 0.08);
+    box-shadow: inset 8px 0 18px rgba(90, 55, 45, 0.16), 0 12px 28px rgba(0, 0, 0, 0.35);
     /* Subtle shadow near the spine */
 }
 
@@ -332,16 +348,16 @@
     width: 100%;
     height: 100%;
     position: relative;
-    background-color: #FF7882;
+    background-color: transparent;
     transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
     /* High-quality ease-out */
     overflow: hidden;
     font-family: "Inter", sans-serif;
-    color: #fff;
+    color: #4a3831;
     border-radius: 10px;
     /* Rounded corners for the "floating" element */
-    padding: 25px;
-    /* Generous internal padding */
+    padding: 25px 26px 25px 52px;
+    /* Generous internal padding, leaving room for the notebook margin */
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -365,9 +381,10 @@
     font-size: 34px;
     /* Big, friendly heading */
     margin-bottom: 15px;
-    text-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    color: #8b1a2b;
+    text-shadow: none;
     /* Added a dotted line for separation */
-    border-bottom: 3px dashed rgba(255, 255, 255, 0.5);
+    border-bottom: 3px dashed rgba(139, 26, 43, 0.35);
 }
 
 /* --- H2: The main message content --- */
@@ -378,17 +395,18 @@
     line-height: 1.6;
     flex-grow: 1;
     overflow-y: auto;
-    text-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+    color: #4a3831;
+    text-shadow: none;
 }
 
 .boxMail .boxMail-container .card2 .signature {
     font-family: 'Dancing Script', cursive;
     font-size: 26px;
     font-weight: bold;
-    color: #fff;
+    color: #9b1f2d;
     margin-top: 15px;
     text-align: right;
-    text-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    text-shadow: none;
 }
 
 /* New: Scrollbar for the message (for when it overflows) */
@@ -397,7 +415,7 @@
 }
 
 .boxMail .boxMail-container .card2 .card2-message-text::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(139, 26, 43, 0.35);
     border-radius: 3px;
 }
 
@@ -430,8 +448,8 @@
 .boxMail .boxMail-container .card2 .card2-content .corner-ribbon.top-left {
     top: 0;
     left: 0;
-    border-top-color: rgba(255, 255, 255, 0.7);
-    border-left-color: rgba(255, 255, 255, 0.7);
+    border-top-color: rgba(139, 26, 43, 0.5);
+    border-left-color: rgba(139, 26, 43, 0.5);
     border-bottom-color: transparent;
     border-right-color: transparent;
 }
@@ -459,9 +477,9 @@
     background:
         radial-gradient(circle at 10% 20%, #fff 2px, transparent 0),
         radial-gradient(circle at 80% 50%, rgba(255, 255, 255, 0.8) 2px, transparent 0),
-        radial-gradient(circle at 50% 90%, #FF7882 1px, transparent 0),
-        radial-gradient(circle at 30% 60%, #fff 1px, transparent 0),
-        radial-gradient(circle at 70% 10%, #FF7882 2px, transparent 0);
+        radial-gradient(circle at 50% 90%, rgba(155, 31, 45, 0.7) 1px, transparent 0),
+        radial-gradient(circle at 30% 60%, rgba(139, 26, 43, 0.4) 1px, transparent 0),
+        radial-gradient(circle at 70% 10%, rgba(155, 31, 45, 0.7) 2px, transparent 0);
     background-size: 50px 50px;
     transform: rotate(1deg);
 }
@@ -473,11 +491,13 @@
 @media screen and (max-width: 658px) {
     .boxMail .boxMail-container {
         position: absolute;
-        width: 650px;
+        width: 750px;
         height: 500px;
         display: flex;
         margin: 0;
-        transform: scale(0.9);
+        /* Explicit phone scale keeps the notebook inside the viewport. */
+        scale: min(0.52, calc((100vw - 20px) * 0.0013333333), calc((100dvh - 100px) * 0.002));
+        transform-origin: center center;
         -webkit-perspective: 2000px;
         perspective: 2000px;
     }
@@ -488,7 +508,7 @@
     }
 
     .boxMail .boxMail-container:hover .card1 {
-        transform: translate(-160px, -250px) rotateY(-140deg);
+        transform: translate(-187px, -250px) rotateY(-140deg);
     }
 
     .boxMail .boxMail-container .card2 h3 {
@@ -504,11 +524,63 @@
         line-height: 1.6;
         flex-grow: 1;
         overflow-y: auto;
-        text-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+        text-shadow: none;
     }
 
     .boxMail .boxMail-container .card2 .signature {
         font-size: 20px;
     }
 
+}
+
+/* --------------------------------------------------------------------------
+   Real-notebook details: binder rings, spine shadow, washi tape and a label.
+   -------------------------------------------------------------------------- */
+
+
+.boxMail .boxMail-container .card1 .notebook-tape {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    z-index: 4;
+    width: 104px;
+    height: 34px;
+    transform: translateX(-50%) rotate(-6deg);
+    background: url('/stickers/tape-3.webp') center / contain no-repeat;
+    opacity: 0.9;
+    pointer-events: none;
+}
+
+.boxMail .boxMail-container .card1 .notebook-label {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    z-index: 4;
+    transform: translateX(-50%) rotate(-2deg);
+    padding: 5px 14px;
+    border: 1px dashed rgba(120, 40, 55, 0.5);
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.65);
+    color: #8b1a2b;
+    font-family: 'Dancing Script', cursive;
+    font-size: 20px;
+    line-height: 1;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+/* Touch devices do not need the hover-to-open book motion. */
+@media (hover: none) {
+    .boxMail .boxMail-container:hover {
+        transform: none;
+    }
+
+    .boxMail .boxMail-container:hover .card1 {
+        transform: translate(-50%, -50%);
+    }
+
+    .boxMail .boxMail-container:hover .card2-content {
+        transform: none;
+        box-shadow: none;
+    }
 }

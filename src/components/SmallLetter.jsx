@@ -1,113 +1,133 @@
-import React, { useState, useRef } from 'react';
-import '../SmallLetter.css';
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { littleLetter, person } from '../data/siteData'
+import '../SmallLetter.css'
+
+// Must match the close animation duration in SmallLetter.css.
+const CLOSE_ANIMATION_MS = 420
 
 const SmallLetter = () => {
-    // 1. State to control the letter's open/close status
-    const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
+  const [isClosing, setIsClosing] = useState(false)
+  const closeTimer = useRef(0)
+  const letterRef = useRef(null)
 
-    // 2. Ref to hold the main letter container DOM element
-    // This is needed to manually add/remove the '--close' class for the animation timing
-    const letterRef = useRef(null);
+  const openLetter = () => {
+    window.clearTimeout(closeTimer.current)
+    setIsClosing(false)
+    setIsOpen(true)
+  }
 
-    // --- Logic for Envelope Click (Toggle) ---
+  const closeLetter = useCallback(() => {
+    if (!isOpen) return
 
-    const handleToggleLetter = () => {
-        const letterElement = letterRef.current;
-        if (!letterElement) return; // Safety check
+    window.clearTimeout(closeTimer.current)
+    setIsOpen(false)
+    setIsClosing(true)
+    closeTimer.current = window.setTimeout(() => setIsClosing(false), CLOSE_ANIMATION_MS)
+  }, [isOpen])
 
-        if (isOpen) {
-            // CLOSE SEQUENCE:
-            // 1. Set the class for the closing animation
-            letterElement.classList.add('small-rajib-letter--close');
-            setIsOpen(false);
+  const toggleLetter = () => {
+    if (isOpen) {
+      closeLetter()
+    } else {
+      openLetter()
+    }
+  }
 
-            // 2. Remove the closing class after the animation duration (600ms)
-            setTimeout(() => {
-                letterElement.classList.remove('small-rajib-letter--close');
-            }, 600);
+  useEffect(() => () => window.clearTimeout(closeTimer.current), [])
 
-        } else {
-            // OPEN SEQUENCE:
-            // 1. Ensure the close class is removed
-            letterElement.classList.remove('small-rajib-letter--close');
-            // 2. Set state to open (which adds 'small-rajib-letter--open')
-            setIsOpen(true);
-        }
-    };
+  useEffect(() => {
+    if (!isOpen) return undefined
 
-    // --- Logic for 'X' Click (Close Only) ---
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') closeLetter()
+    }
 
-    const handleCloseLetter = () => {
-        const letterElement = letterRef.current;
-        if (!letterElement) return; // Safety check
+    // Tapping/clicking anywhere outside the letter closes it — no need to find
+    // the tiny × button, which is especially handy on phones.
+    const handleOutsidePress = (event) => {
+      if (letterRef.current && !letterRef.current.contains(event.target)) {
+        closeLetter()
+      }
+    }
 
-        // Start the close animation immediately
-        letterElement.classList.remove('small-rajib-letter--open');
-        letterElement.classList.add('small-rajib-letter--close');
-        setIsOpen(false); // Update state to reflect closed status
+    document.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('pointerdown', handleOutsidePress)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('pointerdown', handleOutsidePress)
+    }
+  }, [isOpen, closeLetter])
 
-        // Remove the closing class after the animation duration (600ms)
-        setTimeout(() => {
-            letterElement.classList.remove('small-rajib-letter--close');
-        }, 600);
-    };
+  const stateClass = isOpen
+    ? 'small-rajib-letter--open'
+    : isClosing
+      ? 'small-rajib-letter--close'
+      : ''
 
-    // Determine the dynamic class based on 'isOpen' state
-    const letterStateClass = isOpen ? 'small-rajib-letter--open' : '';
+  return (
+    <div ref={letterRef} className={`small-rajib-letter ${stateClass}`.trim()}>
+      <button
+        type="button"
+        className="small-rajib-envelope"
+        onClick={toggleLetter}
+        aria-expanded={isOpen}
+        aria-controls="small-rajib-paper"
+        aria-label={isOpen ? `Close the little letter for ${person.name}` : `Open the little letter for ${person.name}`}
+      >
+        <span className="small-rajib-flap" aria-hidden="true"></span>
 
-    return (
-        <>
-            <div
-                className={`small-rajib-letter ${letterStateClass}`}
-                ref={letterRef} // Attach the ref here
-            >
-                <div
-                    className="small-rajib-envelope"
-                    onClick={handleToggleLetter} // Attach the toggle handler
-                >
-                    <div className="small-rajib-envelope-flap"></div>
-                    <div className="small-rajib-envelope-paper"></div>
-                    <div className="small-rajib-envelope-detail"></div>
-                </div>
+        <span className="small-rajib-envelope-body" aria-hidden="true">
+          <span className="small-rajib-postmark">
+            <span className="small-rajib-postmark-ring"></span>
+            <small>with love</small>
+          </span>
 
-                <div className="small-rajib-paper">
-    <div className="small-rajib-paper-content">
-        <div
+          <span className="small-rajib-stamp">
+            <img src={littleLetter.stamp} alt="" />
+            <span>LOVE</span>
+          </span>
+
+          <span className="small-rajib-address">
+            <span className="small-rajib-address-to">To</span>
+            <strong>{person.name}</strong>
+          </span>
+        </span>
+
+        <span className="small-rajib-wax" aria-hidden="true">{person.name.charAt(0)}</span>
+      </button>
+
+      <article
+        className="small-rajib-paper"
+        id="small-rajib-paper"
+        aria-hidden={!isOpen}
+      >
+        <span className="small-rajib-paper-texture" aria-hidden="true"></span>
+
+        {isOpen && (
+          <button
+            type="button"
             className="small-rajib-paper-close"
-            onClick={handleCloseLetter} // Attach the close handler
-        >
-            x
-        </div>
-        <p>Yo brocaccho,<br /><br />Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud <br /><br />Rajib</p>
-    </div>
+            onClick={closeLetter}
+            aria-label={`Close the little letter for ${person.name}`}
+          >
+            ×
+          </button>
+        )}
 
-    {/* --- NEW SVG DIARY PAGE DECORATION --- */}
-    <svg className="rajib-diary-deco" viewBox="0 0 100 100" preserveAspectRatio="none">
-        {/* Left 'binding' line */}
-        <line x1="5" y1="0" x2="5" y2="100" stroke="#E0DDB7" strokeWidth="1" className="diary-line left-line" />
-        {/* Right 'border' line */}
-        <line x1="95" y1="0" x2="95" y2="100" stroke="#E0DDB7" strokeWidth="1" className="diary-line right-line" />
-        
-        {/* Optional: Top/bottom faint lines for page feel */}
-        <line x1="0" y1="5" x2="100" y2="5" stroke="#E0DDB7" strokeWidth="0.5" className="diary-line top-line" />
-        <line x1="0" y1="95" x2="100" y2="95" stroke="#E0DDB7" strokeWidth="0.5" className="diary-line bottom-line" />
-        
-        {/* Subtle, pulsing dots along the left (like stitching) */}
-        <circle cx="5" cy="10" r="0.5" fill="#E0DDB7" className="diary-dot dot-1" />
-        <circle cx="5" cy="20" r="0.5" fill="#E0DDB7" className="diary-dot dot-2" />
-        <circle cx="5" cy="30" r="0.5" fill="#E0DDB7" className="diary-dot dot-3" />
-        <circle cx="5" cy="40" r="0.5" fill="#E0DDB7" className="diary-dot dot-4" />
-        <circle cx="5" cy="50" r="0.5" fill="#E0DDB7" className="diary-dot dot-5" />
-        <circle cx="5" cy="60" r="0.5" fill="#E0DDB7" className="diary-dot dot-6" />
-        <circle cx="5" cy="70" r="0.5" fill="#E0DDB7" className="diary-dot dot-7" />
-        <circle cx="5" cy="80" r="0.5" fill="#E0DDB7" className="diary-dot dot-8" />
-        <circle cx="5" cy="90" r="0.5" fill="#E0DDB7" className="diary-dot dot-9" />
-    </svg>
-    
-</div>
-            </div>
-        </>
-    )
+        <div className="small-rajib-paper-content">
+          <p className="small-rajib-greeting">{littleLetter.greeting}</p>
+
+          {littleLetter.paragraphs.map((paragraph, index) => (
+            <p key={index}>{paragraph}</p>
+          ))}
+
+          <p className="small-rajib-closing">{littleLetter.closing}</p>
+          <p className="small-rajib-signature">{littleLetter.signature}</p>
+        </div>
+      </article>
+    </div>
+  )
 }
 
-export default SmallLetter;
+export default SmallLetter

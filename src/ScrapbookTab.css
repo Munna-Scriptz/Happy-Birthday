@@ -1,0 +1,110 @@
+/* A small floating shortcut that leaves the rest of the home page untouched. */
+
+.scrapbook-tab {
+    --tab-ink: #3b2b2b;
+    position: fixed;
+    right: clamp(12px, 3vw, 28px);
+    bottom: clamp(12px, 3vw, 26px);
+    z-index: 60;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1rem 0.65rem;
+    background: #fff9ec;
+    color: var(--tab-ink);
+    border: 2px solid var(--tab-ink);
+    border-radius: 4px;
+    box-shadow: 4px 5px 0 rgba(59, 43, 43, 0.85);
+    font-family: "Sriracha", "Segoe UI", cursive;
+    font-size: 0.95rem;
+    line-height: 1;
+    text-decoration: none;
+    transform: rotate(-2.5deg);
+    transform-origin: center;
+    animation: scrapbookTabFloat 4.5s ease-in-out infinite;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+.scrapbook-tab:hover,
+.scrapbook-tab:focus-visible {
+    transform: rotate(0deg) translateY(-3px);
+    box-shadow: 5px 8px 0 rgba(59, 43, 43, 0.85);
+    background: #fffdf6;
+}
+
+.scrapbook-tab:focus-visible {
+    outline: 3px solid #8b0000;
+    outline-offset: 3px;
+}
+
+.scrapbook-tab__tape {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    width: 54px;
+    height: 20px;
+    transform: translateX(-50%) rotate(-4deg);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.15)),
+        repeating-linear-gradient(90deg, #f4d6c9 0 6px, #efccbd 6px 12px);
+    border-left: 1px dashed rgba(120, 80, 70, 0.35);
+    border-right: 1px dashed rgba(120, 80, 70, 0.35);
+    opacity: 0.95;
+    pointer-events: none;
+}
+
+.scrapbook-tab__kicker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.2rem 0.4rem;
+    border-radius: 999px;
+    background: #8b0000;
+    color: #fff8f2;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.scrapbook-tab__label {
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.scrapbook-tab__arrow {
+    font-family: "Inter", system-ui, sans-serif;
+    font-weight: 700;
+    color: #8b0000;
+    transition: transform 0.25s ease;
+}
+
+.scrapbook-tab:hover .scrapbook-tab__arrow,
+.scrapbook-tab:focus-visible .scrapbook-tab__arrow {
+    transform: translateX(3px);
+}
+
+@keyframes scrapbookTabFloat {
+
+    0%,
+    100% {
+        transform: rotate(-2.5deg) translateY(0);
+    }
+
+    50% {
+        transform: rotate(-1deg) translateY(-4px);
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .scrapbook-tab {
+        right: 10px;
+        bottom: 10px;
+        padding: 0.6rem 0.75rem;
+        font-size: 0.82rem;
+        gap: 0.35rem;
+    }
+
+    .scrapbook-tab__kicker {
+        display: none;
+    }
+}
