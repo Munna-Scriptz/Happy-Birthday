@@ -51,18 +51,27 @@
     filter: drop-shadow(0 0 10px #FF7882);
 }
 
-.boxMail .boxMail-container:hover .card1 {
-    transform: translate(-187px, -250px) rotateY(-140deg);
+/* Flip around the page's left edge without shifting it out of the notebook.
+   The cover stays inside the container on desktop and phones. */
+.boxMail .boxMail-container.book-open .card1 {
+    transform: rotateY(-105deg);
+}
+
+@media (hover: hover) {
+    .boxMail .boxMail-container:hover .card1 {
+        transform: rotateY(-105deg);
+    }
 }
 
 .boxMail .boxMail-container .card1,
 .boxMail .boxMail-container .card2 {
+    /* Closed: both pages sit centred. Open: cover flips left in place. */
     position: absolute;
-    width: 100%;
+    top: 0;
+    left: 25%;
+    width: 50%;
     height: 100%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    transform: none;
     border: 1px solid rgba(40, 12, 14, 0.5);
 }
 
@@ -89,9 +98,9 @@
 }
 
 .boxMail-container .card1 {
-    z-index: 1;
+    z-index: 2;
     transform-style: preserve-3d;
-    transform-origin: left;
+    transform-origin: left center;
     /* Maintained transition for a high-quality flip */
     transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -323,12 +332,320 @@
         background-position: 100px 100px;
     }
 }
+/* =========================================
+   PREMIUM SCRAPBOOK NOTEBOOK COVER
+========================================= */
+
+.boxMail .boxMail-container .card1 {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+
+    color: #713b4c;
+
+    /* Hardcover pink texture */
+    background:
+        radial-gradient(ellipse at 20% 20%, rgba(255,255,255,.5), transparent 45%),
+        radial-gradient(ellipse at 80% 85%, rgba(255,255,255,.25), transparent 45%),
+        linear-gradient(145deg, #ffd5df 0%, #f6b8c9 48%, #e99caf 100%);
+
+    border: 1px solid #d9859d;
+    border-right: 4px solid #d47d96;
+
+    box-shadow:
+        inset 5px 0 12px rgba(255,255,255,.45),
+        inset -5px 0 12px rgba(133,48,76,.12),
+        5px 0 15px rgba(0,0,0,.16);
+
+    /* Keep the cover painted after it flips past 90deg; hiding the back
+       made it look like it vanished. */
+    backface-visibility: visible;
+}
+
+/* Plain inside cover shown once the front has flipped open. */
+.boxMail .boxMail-container .card1::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    background: linear-gradient(135deg, #f3adc0 0%, #ffe0e9 100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease 0.2s;
+}
+
+.boxMail .boxMail-container.book-open .card1::after {
+    opacity: 1;
+}
+
+@media (hover: hover) {
+    .boxMail .boxMail-container:hover .card1::after {
+        opacity: 1;
+    }
+}
+
+/* Fine cover texture */
+.boxMail .boxMail-container .card1::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: .22;
+
+    background-image:
+        repeating-linear-gradient(
+            0deg,
+            transparent 0px,
+            rgba(255,255,255,.3) 1px,
+            transparent 2px,
+            transparent 5px
+        );
+
+    z-index: 0;
+}
+
+/* Inner decorative border */
+.notebook-inner-border {
+    position: absolute;
+    inset: 15px;
+    border: 1px solid rgba(255,255,255,.65);
+    border-radius: 4px;
+    box-shadow: inset 0 0 0 1px rgba(195,100,128,.12);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Notebook spine */
+.notebook-spine {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 22px;
+    height: 100%;
+    z-index: 4;
+
+    background: linear-gradient(
+        90deg,
+        #bd6c86,
+        #e9a0b4 35%,
+        #f7c4d1 75%,
+        #d98aa1
+    );
+
+    border-right: 1px solid rgba(137,55,81,.3);
+    box-shadow: 3px 0 7px rgba(112,42,64,.15);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.notebook-spine span {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #fce3e9;
+    border: 1px solid #b86c84;
+    box-shadow:
+        inset 1px 1px 2px rgba(0,0,0,.2),
+        0 1px 2px rgba(255,255,255,.6);
+}
+
+/* Cover content */
+.boxMail .boxMail-container .card1 .cover-text-wrapper {
+    position: relative;
+    z-index: 3;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    width: 85%;
+    margin: 0 0 18px 12px;
+    transform: rotate(-1deg);
+}
+
+.cover-eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #a65d75;
+    margin-bottom: 15px;
+}
+
+.boxMail .boxMail-container .card1 .username {
+    font-family: 'Inter', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: #754154;
+    margin-bottom: 10px;
+}
+
+.boxMail .boxMail-container .card1 .username .underline {
+    display: block;
+    width: 65%;
+    height: 2px;
+    margin: 7px auto 0;
+    background: #c77791;
+    border-radius: 10px;
+}
+
+.boxMail .boxMail-container .card1 .cover-title {
+    font-family: 'Dancing Script', cursive;
+    font-size: 58px;
+    font-weight: 700;
+    text-transform: capitalize;
+    width: 100%;
+    text-align: center;
+    line-height: 1.1;
+    letter-spacing: 1px;
+    margin: 0;
+
+    color: #b94e75;
+    text-shadow: 2px 3px 0 rgba(255,255,255,.65);
+    animation: none;
+}
+
+.boxMail .boxMail-container .card1 .cover-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 12px;
+    color: #89566a;
+    letter-spacing: 1px;
+}
+
+/* Polaroid-style photo */
+.boxMail .boxMail-container .card1 .userImg {
+    position: relative;
+    z-index: 3;
+
+    width: 105px;
+    height: 105px;
+    padding: 6px;
+
+    background: #fffaf9;
+    border-radius: 3px;
+    border: 1px solid #e7c2cb;
+
+    transform: rotate(4deg);
+
+    box-shadow:
+        0 5px 12px rgba(105,39,61,.18),
+        0 1px 3px rgba(0,0,0,.1);
+
+    margin: 0 0 12px 12px;
+}
+
+.boxMail .boxMail-container .card1 .userImg img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    border-radius: 1px;
+}
+
+/* Decorative tape */
+.notebook-tape {
+    position: absolute;
+    top: 25px;
+    right: 45px;
+    width: 75px;
+    height: 22px;
+    z-index: 5;
+
+    background: rgba(255,245,211,.65);
+    transform: rotate(35deg);
+
+    box-shadow: 0 2px 4px rgba(0,0,0,.08);
+    backdrop-filter: blur(2px);
+}
+
+/* Small handwritten label */
+.notebook-label {
+    position: absolute;
+    bottom: 35px;
+    right: 28px;
+    z-index: 3;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #a85e76;
+    transform: rotate(-4deg);
+}
+
+/* Sparkle texture */
+.boxMail .boxMail-container .card1 .card1-decoration-sparkle {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: .16;
+    pointer-events: none;
+
+    background-image:
+        radial-gradient(#fff 1px, transparent 1px);
+
+    background-size: 18px 18px;
+}
+
+/* Decorative shapes */
+.boxMail .boxMail-container .card1 .deco-shape {
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    z-index: 2;
+    color: rgba(255,255,255,.8);
+    filter: drop-shadow(0 2px 3px rgba(160,75,100,.15));
+}
+
+.boxMail .boxMail-container .card1 .deco-shape.top-right-star {
+    top: 70px;
+    right: 27px;
+    animation: slowSpin 18s linear infinite;
+}
+
+.boxMail .boxMail-container .card1 .deco-shape.bottom-left-ring {
+    bottom: 65px;
+    left: 30px;
+    width: 30px;
+    height: 30px;
+    animation: rotateOscillate 8s ease-in-out infinite alternate;
+}
+
+.cover-page-number {
+    position: absolute;
+    bottom: 17px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(132,66,88,.65);
+}
+
 
 /* --- Card 2: The Outer Page Wrapper (Clean background/page texture) --- */
 .boxMail .boxMail-container .card2 {
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 25%;
+    z-index: 1;
     width: 50%;
     height: 100%;
+    transform: none;
     /* Warm ruled paper so the letter reads like a real notebook page. */
     background-color: #fff8e8;
     background-image:
@@ -363,7 +680,8 @@
     flex-direction: column;
 }
 
-/* Hover effect on the inner Pink Box to float it */
+/* Lift the inner page when the cover is flipped open (hover or tap). */
+.boxMail .boxMail-container.book-open .card2-content,
 .boxMail .boxMail-container:hover .card2-content {
     /* Slightly less movement but higher shadow lift */
     transform: translate(12px, 12px);
@@ -491,8 +809,8 @@
 @media screen and (max-width: 658px) {
     .boxMail .boxMail-container {
         position: absolute;
-        width: 750px;
-        height: 500px;
+        width: 650px;
+        height: 450px;
         display: flex;
         margin: 0;
         /* Explicit phone scale keeps the notebook inside the viewport. */
@@ -505,10 +823,6 @@
     .boxMail .boxMail-container:hover {
         transform: rotate(-5deg);
         filter: drop-shadow(0 0 10px #FF7882);
-    }
-
-    .boxMail .boxMail-container:hover .card1 {
-        transform: translate(-187px, -250px) rotateY(-140deg);
     }
 
     .boxMail .boxMail-container .card2 h3 {
@@ -569,18 +883,3 @@
     pointer-events: none;
 }
 
-/* Touch devices do not need the hover-to-open book motion. */
-@media (hover: none) {
-    .boxMail .boxMail-container:hover {
-        transform: none;
-    }
-
-    .boxMail .boxMail-container:hover .card1 {
-        transform: translate(-50%, -50%);
-    }
-
-    .boxMail .boxMail-container:hover .card2-content {
-        transform: none;
-        box-shadow: none;
-    }
-}

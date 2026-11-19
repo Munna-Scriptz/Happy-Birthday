@@ -1,31 +1,37 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { GiCrossMark } from 'react-icons/gi'
 import { bigLetter, person } from '../data/siteData'
 
 const BookCanvas = ({ active, setActive }) => {
   const dropdownRef = useRef(null)
+  const [bookOpen, setBookOpen] = useState(false)
 
-  const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setActive(true)
-    }
-  }
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  })
+  const close = useCallback(() => {
+    setBookOpen(false)
+    setActive(true)
+  }, [setActive])
 
   useEffect(() => {
     if (active) return undefined
 
-    const handleEscape = (event) => {
-      if (event.key === 'Escape') setActive(true)
+    const handlePointerDown = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        close()
+      }
     }
 
-    document.addEventListener('keydown', handleEscape)
-    return () => document.removeEventListener('keydown', handleEscape)
-  }, [active, setActive])
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') close()
+    }
+
+    // pointerdown covers mouse, touch and pen with one listener.
+    document.addEventListener('pointerdown', handlePointerDown)
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [active, close])
 
   return (
     <div
@@ -38,44 +44,80 @@ const BookCanvas = ({ active, setActive }) => {
     >
       <button
         type="button"
-        onClick={() => setActive(true)}
+        onClick={close}
         className="crossAll"
         aria-label="Close letter"
       >
         <GiCrossMark className="text-white" aria-hidden="true" />
       </button>
 
-      <div ref={dropdownRef} className={`boxMail-container duration-500 -translate-y-1/2 ${active ? 'top-0' : ' top-1/2'}`}>
-        <div className="card1">
-          <div className="cover-text-wrapper">
-            <h4 className="username">
-              {bigLetter.coverTo}<span className="underline"></span>
-            </h4>
-            <h3 className="cover-title">
-              {bigLetter.coverTitle}
-            </h3>
-            <p className="cover-subtitle">
-              {bigLetter.coverSubtitle}
-            </p>
+      <div ref={dropdownRef} className={`boxMail-container duration-500 -translate-y-1/2 ${bookOpen ? 'book-open' : ''} ${active ? 'top-0' : ' top-1/2'}`}>
+        <div
+          className="card1"
+          role="button"
+          tabIndex={0}
+          aria-label={bookOpen ? 'Close the notebook cover' : 'Open the notebook cover'}
+          onClick={() => setBookOpen((open) => !open)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault()
+              setBookOpen((open) => !open)
+            }
+          }}
+        >
+          {/* Notebook spine */}
+          <div className="notebook-spine" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
           </div>
 
+          {/* Inner notebook border */}
+          <div className="notebook-inner-border" aria-hidden="true" />
+
+          {/* Cover content */}
+          <div className="cover-text-wrapper">
+            <span className="cover-eyebrow">A LITTLE BOOK OF MEMORIES</span>
+
+            <h4 className="username">
+              {bigLetter.coverTo}
+              <span className="underline" />
+            </h4>
+
+            <h3 className="cover-title">{bigLetter.coverTitle}</h3>
+
+            <p className="cover-subtitle">{bigLetter.coverSubtitle}</p>
+          </div>
+
+          {/* Photo frame */}
           <div className="userImg">
             <img src={person.photo} alt={person.photoAlt} />
           </div>
 
-          <div className="hello-kitty-bow-pattern"></div>
-          <div className="card1-decoration-sparkle"></div>
-          <span className="notebook-tape" aria-hidden="true"></span>
-          <span className="notebook-label" aria-hidden="true">birthday notes</span>
+          {/* Decorations */}
+          <div className="hello-kitty-bow-pattern" />
+          <div className="card1-decoration-sparkle" />
+
+          <span className="notebook-tape" aria-hidden="true" />
+          <span className="notebook-label" aria-hidden="true">
+            MADE WITH LOVE ♥
+          </span>
 
           <svg className="deco-shape top-right-star" viewBox="0 0 100 100" aria-hidden="true">
-            <polygon points="50,0 61,35 98,35 68,57 79,91 50,70 21,91 32,57 2,35 39,35" fill="rgba(255, 255, 255, 0.6)" />
+            <polygon
+              points="50,0 61,35 98,35 68,57 79,91 50,70 21,91 32,57 2,35 39,35"
+              fill="currentColor"
+            />
           </svg>
 
           <svg className="deco-shape bottom-left-ring" viewBox="0 0 100 100" aria-hidden="true">
-            <circle cx="50" cy="50" r="45" stroke="rgba(255, 255, 255, 0.7)" strokeWidth="5" fill="none" />
-            <circle cx="50" cy="50" r="20" fill="rgba(255, 255, 255, 0.3)" />
+            <circle cx="50" cy="50" r="45" stroke="currentColor" strokeWidth="5" fill="none" />
+            <circle cx="50" cy="50" r="20" fill="currentColor" opacity=".3" />
           </svg>
+
+          <span className="cover-page-number" aria-hidden="true">01</span>
         </div>
 
         <div className="card2">

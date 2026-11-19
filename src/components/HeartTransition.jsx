@@ -32,7 +32,7 @@ const HeartTransition = ({ children }) => {
             <svg
               className="heart-loader"
               xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 90 90"
+              viewBox="-30 0 120 120"
               version="1.1"
             >
               <g className="heart-loader__group">
